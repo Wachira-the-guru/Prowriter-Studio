@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Loading Article...</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A; /* Deep slate background (matches portfolio) */
+            color: #E2E8F0; /* Off-white text */
+            line-height: 1.7;
+        }
+        .article-container {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+        }
+        /* Custom formatting for markdown-like headers */
+        .content-body h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 1rem; color: #3B82F6; } /* Primary Color */
+        .content-body h2 { font-size: 1.75rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #E2E8F0; border-bottom: 2px solid #334155; padding-bottom: 4px; }
+        .content-body p { margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="py-12">
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 article-container rounded-xl shadow-2xl p-6 md:p-10">
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-20">
+            <div class="animate-spin inline-block w-8 h-8 border-4 border-t-4 border-blue-500 border-opacity-50 rounded-full border-t-white"></div>
+            <p class="text-gray-400 mt-4 text-xl">Fetching content from cloud...</p>
+        </div>
+
+        <!-- Article Content -->
+        <div id="article-content" class="content-body hidden">
+            <!-- Title, Metadata, and Body will be injected here -->
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden text-center py-20 text-red-400">
+            <h1 class="text-3xl font-bold mb-4">Article Not Found (404)</h1>
+            <p class="text-lg">We couldn't locate the article with that ID. It may have been unpublished or the link is incorrect.</p>
+            <a href="portfolio_landing.html" class="inline-block mt-6 text-blue-400 hover:text-blue-300 transition">&larr; Back to Portfolio</a>
+        </div>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Global variables for Firebase configuration (provided by environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app = null;
+        let db = null;
+        let auth = null;
+
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Simple utility to get URL parameters
+        const getUrlParameter = (name) => {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+        
+        // Function to render the article content using simple formatting
+        const renderArticle = (data) => {
+            const container = document.getElementById('article-content');
+            const pageTitleElement = document.getElementById('page-title');
+            
+            // Set the browser tab title
+            pageTitleElement.textContent = data.title || 'Published Article';
+
+            // Convert simple Markdown-like headings (using the syntax from the Editor)
+            // Note: We use the serverTimestamp, which needs to be converted if available
+            const timestamp = data.timestamp && data.timestamp.toDate ? new Date(data.timestamp.toDate()).toLocaleDateString() : 'Date Unavailable';
+            const author = "ProWriter Studio"; 
+
+            // Convert content from editor format (## Heading, \n\n Paragraphs) to HTML
+            let formattedContent = data.content.replace(/# (.+)/g, '<h1>$1</h1>');
+            formattedContent = formattedContent.replace(/## (.+)/g, '<h2>$1</h2>');
+            formattedContent = formattedContent.split('\n\n').map(p => {
+                if (p.trim().startsWith('<h1') || p.trim().startsWith('<h2')) {
+                    return p.trim(); // Don't wrap headers in <p> tags
+                }
+                return p.trim() ? `<p>${p.trim()}</p>` : '';
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="border-b border-gray-600 pb-4 mb-6">
+                    <h1 class="text-5xl font-extrabold text-white">${data.title}</h1>
+                    <p class="text-sm text-gray-400 mt-2">By ${author} | Published on: ${timestamp}</p>
+                </div>
+                ${formattedContent}
+            `;
+            
+            document.getElementById('loading-state').classList.add('hidden');
+            container.classList.remove('hidden');
+        }
+
+
+        // Initialize Firebase and Auth
+        const initFirebaseAndLoadArticle = async () => {
+            const articleId = getUrlParameter('id');
+            const loadingState = document.getElementById('loading-state');
+            const errorState = document.getElementById('error-state');
+
+
+            if (!articleId) {
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('page-title').textContent = 'Error - No ID';
+                return;
+            }
+
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing.");
+                errorState.innerHTML = '<h1 class="text-3xl font-bold mb-4">Configuration Error</h1><p>The application configuration is missing. Cannot load public data.</p>';
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // 1. Initialize Firebase
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('debug');
+
+                // 2. Auth (required for security rules, even for public reads)
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // 3. Define the public article path
+                // Public data path: artifacts/{appId}/public/data/articles/{articleId}
+                const docPath = `artifacts/${appId}/public/data/articles/${articleId}`;
+                const docRef = doc(db, docPath);
+
+                // 4. Fetch the Document
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    renderArticle(docSnap.data());
+                } else {
+                    console.log("No such article document!");
+                    loadingState.classList.add('hidden');
+                    errorState.classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error("Error fetching article:", error);
+                errorState.innerHTML = `<h1 class="text-3xl font-bold mb-4">Loading Error</h1><p>Failed to connect to the database. Error: ${error.message}</p>`;
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
+        };
+
+        window.onload = initFirebaseAndLoadArticle;
+    </script>
+</body>
+</html>

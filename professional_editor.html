@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProContent Studio</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+            color: #c9d1d9; /* Light text */
+        }
+        .container-card {
+            background-color: #161b22; /* Slightly lighter card background */
+            border: 1px solid #30363d;
+        }
+        .primary-btn {
+            background-color: #238636;
+            transition: background-color 0.2s;
+        }
+        .primary-btn:hover {
+            background-color: #2ea043;
+        }
+        .publish-btn {
+            background-color: #3B82F6; /* Blue for publishing */
+            transition: background-color 0.2s;
+        }
+        .publish-btn:hover {
+            background-color: #2563EB;
+        }
+        .tab-btn {
+            border-bottom: 3px solid transparent;
+            transition: border-bottom-color 0.2s, color 0.2s;
+        }
+        .tab-btn.active {
+            border-bottom-color: #238636;
+            color: #f0f6f0;
+        }
+        .editor-area {
+            min-height: 400px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            resize: vertical;
+        }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-[#f0f6f0]">ProContent Studio</h1>
+            <p class="text-gray-400 mt-2">Professional Article Writing and Video Clipping Tools</p>
+        </header>
+
+        <!-- Main Card Container -->
+        <div class="container-card rounded-xl p-4 md:p-8 shadow-2xl">
+            
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-[#30363d] mb-6">
+                <button id="tab-article" class="tab-btn active px-4 py-2 font-semibold text-lg text-[#f0f6f0] focus:outline-none" onclick="showTab('article')">
+                    Article Editor
+                </button>
+                <button id="tab-video" class="tab-btn px-4 py-2 font-semibold text-lg text-gray-400 focus:outline-none" onclick="showTab('video')">
+                    Video Clipper
+                </button>
+            </div>
+
+            <!-- Content Tabs -->
+            
+            <!-- 1. Article Editor Tab -->
+            <div id="content-article" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4 text-white">AI-Powered Article Writer</h2>
+                <div class="space-y-4">
+                    
+                    <!-- Prompt Input -->
+                    <div>
+                        <label for="article-prompt" class="block text-sm font-medium text-gray-400 mb-1">Article Topic/Prompt</label>
+                        <input type="text" id="article-prompt" placeholder="e.g., 'Summary of recent advancements in quantum computing for a tech blog'" class="w-full px-4 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] focus:border-[#238636] focus:ring-1 focus:ring-[#238636] text-white">
+                    </div>
+
+                    <!-- Generate Button (Simulated AI Call) -->
+                    <button id="generate-article-btn" class="primary-btn w-full px-6 py-3 rounded-lg text-white font-bold text-lg" onclick="simulateArticleGeneration()">
+                        Generate Article Draft (AI Simulation)
+                    </button>
+                    
+                    <!-- Loading Indicator -->
+                    <div id="article-loading" class="hidden text-center p-4 text-[#238636]">
+                        <div class="animate-spin inline-block w-6 h-6 border-4 border-t-4 border-[#238636] border-opacity-50 rounded-full border-t-white"></div>
+                        <span class="ml-2">Generating content...</span>
+                    </div>
+
+                    <!-- Rich Text Editor Placeholder -->
+                    <div>
+                        <label for="article-editor" class="block text-sm font-medium text-gray-400 mb-1">Editor (Edit and Refine)</label>
+                        <textarea id="article-editor" class="editor-area w-full p-4 rounded-lg text-gray-300 placeholder-gray-600 focus:border-[#238636] focus:ring-1 focus:ring-[#238636]" placeholder="Your generated article draft will appear here. Edit it to perfection."></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                        <button class="w-full sm:w-1/3 px-6 py-3 rounded-lg text-white font-bold bg-gray-600 hover:bg-gray-700 transition" onclick="copyContent('article-editor')">
+                            Copy Article to Clipboard
+                        </button>
+                        <button class="w-full sm:w-1/3 px-6 py-3 rounded-lg text-white font-bold bg-[#30363d] hover:bg-[#484f58] transition" onclick="saveContent('article-editor', 'article', false)">
+                            Save Draft (Private)
+                        </button>
+                        <button class="w-full sm:w-1/3 px-6 py-3 rounded-lg text-white font-bold publish-btn" onclick="saveContent('article-editor', 'article', true)">
+                            Publish Public Article
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Video Clipper Tab -->
+            <div id="content-video" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-4 text-white">Video Clipper & Trimmer</h2>
+                <div class="space-y-6">
+                    
+                    <!-- Video Player Area -->
+                    <div class="bg-black rounded-lg overflow-hidden border border-[#30363d] p-4">
+                        <video id="video-player" width="100%" height="auto" controls class="rounded-lg shadow-lg"
+                            src="https://media.w3.org/2010/05/sintel/trailer.mp4" 
+                            poster="https://placehold.co/1280x720/161b22/c9d1d9?text=Load+Video+to+Clip"
+                            onerror="this.poster='https://placehold.co/1280x720/ff0000/ffffff?text=Video+Load+Error'">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <!-- Time Range Selector -->
+                    <div class="space-y-3 p-4 container-card rounded-xl">
+                        <label class="block text-lg font-medium text-gray-300 mb-2">Select Clipping Range</label>
+                        <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+                            
+                            <!-- Start Time -->
+                            <div class="w-full md:w-1/2">
+                                <label for="start-time" class="block text-sm font-medium text-gray-400">Start Time (seconds)</label>
+                                <input type="number" id="start-time" value="0" min="0" step="0.5" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] focus:border-blue-500 text-white">
+                            </div>
+                            
+                            <!-- End Time -->
+                            <div class="w-full md:w-1/2">
+                                <label for="end-time" class="block text-sm font-medium text-gray-400">End Time (seconds)</label>
+                                <input type="number" id="end-time" value="10" min="0" step="0.5" class="w-full px-3 py-2 rounded-lg bg-[#0d1117] border border-[#30363d] focus:border-blue-500 text-white">
+                            </div>
+                        </div>
+                        
+                        <!-- Clip Button -->
+                        <button id="clip-video-btn" class="primary-btn w-full mt-4 px-6 py-3 rounded-lg text-white font-bold text-lg" onclick="simulateVideoClip()">
+                            Clip Video Segment (Simulation)
+                        </button>
+                        
+                        <!-- Video Status/Result Message -->
+                        <p id="video-status" class="text-center text-sm mt-3 text-gray-500">Video loaded successfully (Sintel Trailer).</p>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Message Box (Used instead of alert) -->
+            <div id="message-box" class="fixed top-5 right-5 z-50 transition-transform transform translate-x-full" role="alert">
+                <!-- Content will be injected here -->
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Global variables for Firebase configuration (provided by environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app = null;
+        let db = null;
+        let auth = null;
+        let userId = null;
+        
+        // MOCK ID for the very first public article, so we can link to it from the portfolio page.
+        // This is the ID used in portfolio_landing.html
+        const MOCK_ARTICLE_ID = "blockchain-readiness-q3-2025";
+
+
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize Firebase and Auth
+        const initFirebase = async () => {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing.");
+                showToast('error', 'Firebase config missing. Persistence disabled.');
+                return;
+            }
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Enable debug logging for Firestore
+                setLogLevel('debug');
+
+                // Sign in logic
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("User ID set:", userId);
+                        showToast('info', `Signed in as user: ${userId.substring(0, 8)}...`);
+                    } else {
+                        userId = crypto.randomUUID(); // Fallback to a random ID if sign-in fails or user signs out
+                        console.log("Using temporary user ID:", userId);
+                        showToast('warning', 'Could not authenticate. Using temporary storage ID.');
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+                showToast('error', `Authentication error: ${error.message}`);
+                userId = crypto.randomUUID(); // Fallback
+            }
+        };
+
+        initFirebase();
+        
+        // Expose functions for use in global scope (for button clicks)
+        window.showTab = showTab;
+        window.simulateArticleGeneration = simulateArticleGeneration;
+        window.simulateVideoClip = simulateVideoClip;
+        window.copyContent = copyContent;
+        window.saveContent = saveContent;
+
+    </script>
+
+    <!-- Application Logic (Not dependent on Firebase imports for basic functionality) -->
+    <script>
+        /**
+         * Custom Toast Notification Function (Replaces alert)
+         * @param {string} type - 'success', 'error', 'info', 'warning'
+         * @param {string} message - The message to display
+         */
+        function showToast(type, message) {
+            const box = document.getElementById('message-box');
+            let bgColor = '';
+            let borderColor = '';
+            let icon = '';
+
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-green-600';
+                    borderColor = 'border-green-700';
+                    icon = `<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`;
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-600';
+                    borderColor = 'border-red-700';
+                    icon = `<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>`;
+                    break;
+                case 'warning':
+                    bgColor = 'bg-yellow-600';
+                    borderColor = 'border-yellow-700';
+                    icon = `<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-12a1 1 0 112 0v4a1 1 0 11-2 0V6zm1 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>`;
+                    break;
+                case 'info':
+                default:
+                    bgColor = 'bg-blue-600';
+                    borderColor = 'border-blue-700';
+                    icon = `<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v4a1 1 0 102 0V7zm0 6a1 1 0 10-2 0 1 1 0 002 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>`;
+                    break;
+            }
+
+            box.innerHTML = `
+                <div class="flex items-center p-4 rounded-lg shadow-xl ${bgColor} border ${borderColor} text-white">
+                    ${icon}
+                    <span class="text-sm font-medium">${message}</span>
+                </div>
+            `;
+
+            // Show the box
+            box.classList.remove('translate-x-full');
+            box.classList.add('translate-x-0');
+
+            // Hide the box after 5 seconds
+            setTimeout(() => {
+                box.classList.remove('translate-x-0');
+                box.classList.add('translate-x-full');
+            }, 5000);
+        }
+
+        /**
+         * Handles the switching between the Article Editor and Video Clipper tabs.
+         * @param {string} tabId - 'article' or 'video'
+         */
+        function showTab(tabId) {
+            const tabs = ['article', 'video'];
+
+            tabs.forEach(id => {
+                const btn = document.getElementById(`tab-${id}`);
+                const content = document.getElementById(`content-${id}`);
+                
+                if (id === tabId) {
+                    btn.classList.add('active', 'text-[#f0f6f0]');
+                    btn.classList.remove('text-gray-400');
+                    content.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('active', 'text-[#f0f6f0]');
+                    btn.classList.add('text-gray-400');
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        /**
+         * Simulates an AI content generation process.
+         */
+        function simulateArticleGeneration() {
+            const prompt = document.getElementById('article-prompt').value;
+            const loading = document.getElementById('article-loading');
+            const editor = document.getElementById('article-editor');
+            const button = document.getElementById('generate-article-btn');
+
+            if (!prompt) {
+                showToast('warning', 'Please enter an article topic or prompt first.');
+                return;
+            }
+
+            // Start loading state
+            editor.value = '';
+            button.disabled = true;
+            button.textContent = 'Generating...';
+            loading.classList.remove('hidden');
+            showToast('info', 'Contacting AI writing service. Please wait.');
+
+            // Hardcoded content for the mock published article
+            const simulatedContent = `
+# The Decentralized Future: Assessing Enterprise Blockchain Readiness
+
+## Introduction
+The convergence of decentralized ledger technology (DLT), commonly known as blockchain, and enterprise operations is creating significant opportunities for improved efficiency and transparency. This whitepaper assesses the current state of enterprise readiness for adopting blockchain solutions across key sectors like supply chain, finance, and healthcare. We must move beyond hype and focus on pragmatic, scalable implementations.
+
+## Supply Chain Transparency
+In supply chain management, blockchain offers an immutable record of product origin and movement. This drastically reduces fraud, enables faster recall procedures, and provides verifiable provenance for consumers. The major hurdle is the initial integration cost and the need for industry-wide consensus on standards. Early adopters are seeing significant returns on investment in areas requiring high regulatory compliance.
+
+## Financial Services Innovation
+Financial institutions are leveraging DLT for faster cross-border payments, reducing counterparty risk, and streamlining compliance processes. Smart contracts are automating escrow and collateral management. However, regulatory clarity on digital assets and tokenized securities remains the primary barrier to widespread adoption. Pilots show promise for cutting costs in back-office operations.
+
+## Conclusion
+Enterprise blockchain readiness is highly dependent on sector maturity. While financial and supply chain sectors are actively piloting and deploying solutions, the path to mass adoption requires continued focus on interoperability and regulatory alignment. Organizations that begin developing proof-of-concept solutions today will be best positioned to capture future value.
+            `.trim();
+
+            // Simulate network latency
+            setTimeout(() => {
+                editor.value = simulatedContent;
+                
+                // End loading state
+                button.disabled = false;
+                button.textContent = 'Generate Article Draft (AI Simulation)';
+                loading.classList.add('hidden');
+                showToast('success', 'Article draft generated successfully!');
+                
+            }, 3000); // 3 second delay
+        }
+
+        /**
+         * Simulates the process of clipping a video segment.
+         */
+        function simulateVideoClip() {
+            const video = document.getElementById('video-player');
+            const startInput = document.getElementById('start-time');
+            const endInput = document.getElementById('end-time');
+            const status = document.getElementById('video-status');
+            const clipBtn = document.getElementById('clip-video-btn');
+
+            const startTime = parseFloat(startInput.value);
+            let endTime = parseFloat(endInput.value);
+            const duration = video.duration;
+
+            if (isNaN(duration) || duration <= 0) {
+                status.textContent = "Error: Video duration is not available or video not loaded.";
+                status.classList.add('text-red-500');
+                showToast('error', 'Cannot clip: Video not ready.');
+                return;
+            }
+
+            // Validate times
+            if (startTime < 0 || endTime > duration || startTime >= endTime) {
+                status.textContent = `Error: Invalid range. Duration is ${duration.toFixed(2)}s. Start must be < End.`;
+                status.classList.add('text-red-500');
+                showToast('error', 'Invalid clip range specified.');
+                return;
+            }
+            
+            // Auto-correct end time if too large, though validation should catch it.
+            endTime = Math.min(endTime, duration);
+
+            const clipLength = (endTime - startTime).toFixed(2);
+            
+            // Start clipping simulation
+            clipBtn.disabled = true;
+            clipBtn.textContent = 'Processing Clip...';
+            status.textContent = `Clipping video from ${startTime.toFixed(2)}s to ${endTime.toFixed(2)}s (Length: ${clipLength}s)...`;
+            status.classList.remove('text-red-500');
+            status.classList.add('text-blue-400');
+            showToast('info', 'Video processing started.');
+
+
+            // Simulate heavy processing latency
+            setTimeout(() => {
+                // End simulation
+                clipBtn.disabled = false;
+                clipBtn.textContent = 'Clip Video Segment (Simulation)';
+                status.textContent = `SUCCESS! Segment clipped. Download link simulated for a ${clipLength} second clip.`;
+                status.classList.remove('text-blue-400');
+                status.classList.add('text-green-400');
+                showToast('success', `Video clip of ${clipLength}s is ready!`);
+
+                // Optionally, jump the video player to the start time
+                video.currentTime = startTime;
+
+            }, 4500); // 4.5 second delay
+        }
+
+        /**
+         * Copies the content of a textarea to the clipboard.
+         * @param {string} elementId - The ID of the textarea element.
+         */
+        function copyContent(elementId) {
+            const element = document.getElementById(elementId);
+            
+            if (element.value.trim() === '') {
+                showToast('warning', 'Nothing to copy. The content area is empty.');
+                return;
+            }
+
+            // Fallback for secure context issues in iframes
+            try {
+                element.select();
+                document.execCommand('copy');
+                showToast('success', 'Content copied to clipboard!');
+            } catch (err) {
+                console.error('Copy command failed:', err);
+                showToast('error', 'Copy failed. Please manually select and copy the text.');
+            }
+        }
+        
+        /**
+         * Saves content to Firestore.
+         * @param {string} elementId - The ID of the textarea element.
+         * @param {string} contentType - 'article' or 'video'
+         * @param {boolean} isPublic - If true, saves to the public collection for publishing.
+         */
+        async function saveContent(elementId, contentType, isPublic) {
+            const content = document.getElementById(elementId).value;
+            const db = window.app && window.app.db;
+            const userId = window.auth && window.auth.currentUser ? window.auth.currentUser.uid : (window.userId || crypto.randomUUID());
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+            // Check if Firebase is initialized. The actual db object is stored in the window by the module script.
+            if (!window.db) {
+                showToast('error', 'Database connection not ready. Try again in a moment.');
+                return;
+            }
+            
+            const realDb = window.db; // Use the actual Firestore instance
+
+            if (content.trim() === '') {
+                showToast('warning', `The ${contentType} editor is empty. Nothing to save.`);
+                return;
+            }
+
+            try {
+                // Get the Firestore modules from the global scope set in the type="module" script
+                const { doc, setDoc, collection, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                
+                // Get prompt for the title if it's not empty
+                const articlePrompt = document.getElementById('article-prompt').value;
+                const data = {
+                    content: content,
+                    type: contentType,
+                    timestamp: serverTimestamp(),
+                    userId: userId,
+                    title: articlePrompt || `Untitled ${contentType} Draft`, 
+                };
+
+                let collectionPath;
+                let docId = undefined; 
+                let statusMessage = '';
+
+                if (isPublic) {
+                    // PUBLIC PATH: artifacts/{appId}/public/data/articles/{MOCK_ARTICLE_ID}
+                    collectionPath = `artifacts/${appId}/public/data/articles`;
+                    // For the first mock article, we use a fixed ID so the portfolio link works.
+                    docId = window.MOCK_ARTICLE_ID; 
+                    showToast('info', 'Publishing to public collection...');
+                    statusMessage = `✅ Article PUBLISHED! ID: ${docId}. Check your portfolio!`;
+                } else {
+                    // PRIVATE PATH: artifacts/{appId}/users/{userId}/drafts/{docId}
+                    collectionPath = `artifacts/${appId}/users/${userId}/drafts`;
+                    showToast('info', 'Saving draft privately...');
+                    statusMessage = `✅ Private Draft saved successfully!`;
+                }
+                
+                const collectionRef = collection(realDb, collectionPath);
+                
+                // If docId is defined (for the mock public article), use setDoc with docRef
+                if (docId) {
+                    const docRef = doc(collectionRef, docId);
+                    await setDoc(docRef, data);
+                } else {
+                    // Otherwise, use setDoc(doc(collectionRef)) to let Firestore assign a new random ID
+                    await setDoc(doc(collectionRef), data);
+                }
+
+                showToast('success', statusMessage);
+
+            } catch (e) {
+                console.error("Error saving/publishing document: ", e);
+                showToast('error', `❌ Failed to save/publish: ${e.message}`);
+            }
+        }
+
+        // Initialize with the article tab active
+        window.onload = () => {
+             // Add event listeners to update video time inputs on player events
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.addEventListener('loadedmetadata', () => {
+                const duration = videoPlayer.duration;
+                document.getElementById('end-time').value = Math.min(10, duration).toFixed(2);
+                document.getElementById('video-status').textContent = `Video loaded. Duration: ${duration.toFixed(2)}s`;
+                document.getElementById('video-status').classList.remove('text-red-500', 'text-blue-400');
+                document.getElementById('video-status').classList.add('text-gray-500');
+            });
+            videoPlayer.addEventListener('error', () => {
+                document.getElementById('video-status').textContent = "Error loading video source.";
+                document.getElementById('video-status').classList.add('text-red-500');
+            });
+            
+            // Set initial tab state
+            showTab('article');
+        };
+
+    </script>
+</body>
+</html>
