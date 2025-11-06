@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProWriter Studio - Professional Writing & Video Editing</title>
+    <!-- Basic SEO Foundation -->
+    <meta name="description" content="Expert writer and video editor specializing in whitepapers, market research, and corporate video content. View our portfolio of published works and video edits.">
+    <meta name="keywords" content="professional writing, whitepapers, market research, video editor, corporate video, documentary editing, content creation">
+    <meta name="author" content="ProWriter Studio">
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A; /* Deep slate background */
+            color: #E2E8F0; /* Off-white text */
+        }
+        .header-bg {
+            background-color: #1E293B; /* Slightly darker shade for header */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .section-card {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .section-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+        }
+        .primary-color {
+            color: #3B82F6; /* Blue for highlights */
+        }
+        .primary-btn {
+            background-color: #3B82F6;
+            transition: background-color 0.2s;
+        }
+        .primary-btn:hover {
+            background-color: #2563EB;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="header-bg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold primary-color">ProWriter Studio</h1>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#portfolio" class="hover:primary-color transition duration-150">Portfolio</a>
+                <a href="#services" class="hover:primary-color transition duration-150">Services</a>
+                <a href="#about" class="hover:primary-color transition duration-150">About</a>
+                <a href="#contact" class="primary-btn px-3 py-1 rounded-md text-white">Inquire Now</a>
+            </nav>
+            <!-- Mobile Menu Placeholder -->
+            <button class="md:hidden text-xl primary-color">&#9776;</button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- 1. Hero Section -->
+        <section id="hero" class="text-center py-20 md:py-32">
+            <h2 class="text-5xl md:text-7xl font-extrabold leading-tight mb-4">
+                Content That <span class="primary-color">Informs</span>, <br class="hidden sm:inline"> Content That <span class="primary-color">Converts</span>.
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
+                I deliver meticulous market research reports, compelling whitepapers, and dynamic video edits that capture attention and drive business objectives.
+            </p>
+            <a href="#services" class="primary-btn px-8 py-4 rounded-xl text-white font-bold text-lg inline-block shadow-lg">
+                Explore Services
+            </a>
+        </section>
+
+        <!-- 2. Services Overview Section -->
+        <section id="services" class="py-16">
+            <h2 class="text-4xl font-bold text-center mb-12">Core Expertise</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- Service Card 1: Article/Report Writing -->
+                <div class="section-card p-6 rounded-xl">
+                    <h3 class="text-2xl font-semibold primary-color mb-3">Technical Writing</h3>
+                    <p class="text-gray-400 mb-4">Deep research and composition for whitepapers, comprehensive market reports, and long-form analytical articles.</p>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li>&#10003; Whitepapers & E-Books</li>
+                        <li>&#10003; SEO-Optimized Blog Posts</li>
+                        <li>&#10003; Corporate Case Studies</li>
+                    </ul>
+                </div>
+
+                <!-- Service Card 2: Video Editing -->
+                <div class="section-card p-6 rounded-xl">
+                    <h3 class="text-2xl font-semibold primary-color mb-3">Corporate Video Editing</h3>
+                    <p class="text-gray-400 mb-4">Transforming raw footage into professional clips, explainer videos, social media shorts, and documentary-style narratives.</p>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li>&#10003; Documentary Focus (Long-term)</li>
+                        <li>&#10003; Motion Graphics Integration</li>
+                        <li>&#10003; Color Grading & Sound Design</li>
+                    </ul>
+                </div>
+                
+                <!-- Service Card 3: Consultation -->
+                <div class="section-card p-6 rounded-xl">
+                    <h3 class="text-2xl font-semibold primary-color mb-3">Content Strategy</h3>
+                    <p class="text-gray-400 mb-4">Guidance on content roadmap, audience targeting, and distribution channels for maximum impact.</p>
+                    <ul class="text-sm text-gray-400 space-y-1">
+                        <li>&#10003; SEO Audits & Planning</li>
+                        <li>&#10003; Competitor Analysis</li>
+                        <li>&#10003; Editorial Calendar Setup</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Portfolio Section (Articles & Reports) -->
+        <section id="portfolio" class="py-16">
+            <h2 class="text-4xl font-bold text-center mb-12">Featured Portfolio</h2>
+            
+            <h3 class="text-3xl font-semibold mb-6 primary-color">Long-Form Articles & Reports</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Article 1 -->
+                <a href="#" class="section-card p-5 rounded-xl block group">
+                    <p class="text-xs text-blue-400 mb-1">Whitepaper | Q3 2025</p>
+                    <h4 class="text-xl font-bold mb-2 group-hover:primary-color transition">The Decentralized Future: Assessing Enterprise Blockchain Readiness</h4>
+                    <p class="text-gray-500 text-sm">A deep dive into supply chain transparency and distributed ledger technologies.</p>
+                </a>
+                
+                <!-- Article 2 -->
+                <a href="#" class="section-card p-5 rounded-xl block group">
+                    <p class="text-xs text-blue-400 mb-1">Market Research | Feb 2025</p>
+                    <h4 class="text-xl font-bold mb-2 group-hover:primary-color transition">Global Shift: The Rise of Sustainable Packaging Solutions</h4>
+                    <p class="text-gray-500 text-sm">Analyzing consumer demand and regulatory pressures in the packaging industry.</p>
+                </a>
+                
+                <!-- Article 3 -->
+                <a href="#" class="section-card p-5 rounded-xl block group">
+                    <p class="text-xs text-blue-400 mb-1">Tech Blog | Jan 2025</p>
+                    <h4 class="text-xl font-bold mb-2 group-hover:primary-color transition">5 Ways AI Is Rewriting the Rules of E-commerce Fulfillment</h4>
+                    <p class="text-gray-500 text-sm">A concise, SEO-focused piece exploring automated logistics and customer service.</p>
+                </a>
+            </div>
+            
+            <h3 class="text-3xl font-semibold mt-12 mb-6 primary-color">Video Editing & Clipping Portfolio</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Video 1 -->
+                <div class="section-card p-3 rounded-xl">
+                    <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center text-gray-300 mb-3">
+                        <!-- Placeholder for YouTube/Vimeo Embed or Thumbnail -->
+                        <span class="text-lg">Video Clip: Corporate Explainer (30s)</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Showreel: High-impact motion graphics and rapid-cut transitions.</p>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="section-card p-3 rounded-xl">
+                    <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center text-gray-300 mb-3">
+                         <span class="text-lg">Video Clip: Interview Trimming & Color Grade</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Demonstrates clean editing flow and professional color correction.</p>
+                </div>
+                
+                <!-- Video 3 -->
+                <div class="section-card p-3 rounded-xl">
+                    <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center text-gray-300 mb-3">
+                         <span class="text-lg">Video Clip: Product Showcase (60s)</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">A full-service piece from concept to final export.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="#contact" class="primary-btn px-6 py-3 rounded-lg text-white font-bold">
+                    View Full Portfolio & Case Studies
+                </a>
+            </div>
+        </section>
+        
+        <!-- 4. Contact / CTA Section -->
+        <section id="contact" class="py-16 bg-blue-900/10 rounded-xl section-card">
+            <div class="text-center max-w-2xl mx-auto p-6">
+                <h2 class="text-4xl font-bold mb-4">Ready to Elevate Your Content?</h2>
+                <p class="text-gray-300 mb-8">Let's discuss your next whitepaper, market report, or documentary project. Inquire today for a detailed quote and timeline.</p>
+                <a href="mailto:your_email@example.com" class="primary-btn px-8 py-4 rounded-xl text-white font-bold text-xl inline-block">
+                    Get in Touch
+                </a>
+                <p class="text-sm text-gray-500 mt-4">Email response within 24 hours.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="header-bg mt-12 py-8 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
+            <p>&copy; 2025 ProWriter Studio. All rights reserved.</p>
+            <div class="mt-2 space-x-4">
+                <!-- Placeholder links for future legal pages -->
+                <a href="#" class="hover:primary-color">Privacy Policy</a>
+                <a href="#" class="hover:primary-color">Terms of Service</a>
+                <a href="#about" class="hover:primary-color">About Us</a>
+            </div>
+            <p class="mt-4 text-xs">Developed with a focus on SEO and responsive design.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
